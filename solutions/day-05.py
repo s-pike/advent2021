@@ -90,7 +90,7 @@ larger - now a total of 12 points.
 Consider all of the lines. At how many points do at least two lines overlap?
 """
 
-from aoc2021 import aoc2021
+import aoc2021
 from math import copysign
 from collections import defaultdict
 

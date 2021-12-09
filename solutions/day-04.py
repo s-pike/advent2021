@@ -100,7 +100,7 @@ be?
 from copy import deepcopy
 import re
 from itertools import product
-from aoc2021 import aoc2021
+import aoc2021
 
 raw_data = aoc2021.import_data(day=4)
 

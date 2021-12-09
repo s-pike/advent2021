@@ -87,7 +87,7 @@ How many lanternfish would there be after 256 days?
 
 """
 
-from aoc2021 import aoc2021
+import aoc2021
 
 class LanternfishShoal():
     
@@ -130,7 +130,7 @@ def test_shoal():
     print("Tests passed")
 
 def solution():
-    initial_state = aoc2021.import_data(day=6)[0]
+    initial_state = aoc2021.import_data(day=6, as_list=False)
     lanternfish_shoal = LanternfishShoal(initial_state)
     for n in [80, 256]:
         day_n_size = lanternfish_shoal.step_n_days(n).shoal_size()    
