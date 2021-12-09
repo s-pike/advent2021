@@ -74,6 +74,17 @@ there would be a total of 5934.
 Find a way to simulate lanternfish. How many lanternfish would there be after 
 80 days?
 
+--- Part Two ---
+
+Suppose the lanternfish live forever and have unlimited food and space. Would 
+they take over the entire ocean?
+
+After 256 days in the example above, there would be a total of 26984457539 
+lanternfish!
+
+How many lanternfish would there be after 256 days?
+
+
 """
 
 from aoc2021 import aoc2021
@@ -111,17 +122,19 @@ class LanternfishShoal():
 def test_shoal():
     initial_state = "3,4,3,1,2"
     test_shoal = LanternfishShoal(initial_state)
-    day_18_size = test_shoal.step_n_days(18).shoal_size()
-    day_80_size = test_shoal.step_n_days(80).shoal_size()
-    assert day_18_size == 26, f'day 18 size {day_18_size}'
-    assert day_80_size == 5934, f'day 80 size {day_80_size}'
+    test_cases = {18: 26, 80: 5934, 256: 26984457539}
+    for k, v in test_cases.items():
+        test_size = test_shoal.step_n_days(k).shoal_size()
+        assertion_msg = f'Expected day {k} size: {v}, returned: {test_size}'
+        assert test_size == v, assertion_msg    
     print("Tests passed")
 
 def solution():
     initial_state = aoc2021.import_data(day=6)[0]
     lanternfish_shoal = LanternfishShoal(initial_state)
-    day_80_size = lanternfish_shoal.step_n_days(80).shoal_size()
-    print("Day 80 size for the lantern fish shoal is:", day_80_size)
+    for n in [80, 256]:
+        day_n_size = lanternfish_shoal.step_n_days(n).shoal_size()    
+        print(f'Day {n} size for the lantern fish shoal is: {day_n_size}')
 
 if __name__ == "__main__":
     test_shoal()
