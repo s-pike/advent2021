@@ -5,5 +5,5 @@ setup(
    version='1.0',
    description='Module containing supporting function for advent of code 2021',
    author='Stephen Pike',   
-   packages=find_packages(include=['aoc2021']),  #same as name
+   packages=find_packages(include=['aoc021']),  #same as name
 )

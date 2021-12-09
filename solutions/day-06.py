@@ -87,7 +87,7 @@ How many lanternfish would there be after 256 days?
 
 """
 
-from aoc2021 import aoc2021
+import aoc2021
 
 class LanternfishShoal():
     
