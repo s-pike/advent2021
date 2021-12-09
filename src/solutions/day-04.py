@@ -97,7 +97,6 @@ be?
 
 """
 
-# import os
 from copy import deepcopy
 import re
 from itertools import product
@@ -152,7 +151,7 @@ def process_data(raw_data):
     board_start = 2
 
     boards = []
-    current_board = []    
+    current_board = []
     for l in raw_data[board_start:]:
         if len(l) > 0:
             current_board.append(str_to_list_of_int(l))
