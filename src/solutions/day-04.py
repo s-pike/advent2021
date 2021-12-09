@@ -75,6 +75,26 @@ get the final score, 188 * 24 = 4512.
 
 To guarantee victory against the giant squid, figure out which board will win 
 first. What will your final score be if you choose that board?
+
+--- Part Two ---
+
+On the other hand, it might be wise to try a different strategy: let the giant 
+squid win.
+
+You aren't sure how many bingo boards a giant squid could play at once, so 
+rather than waste time counting its arms, the safe thing to do is to figure out 
+which board will win last and choose that one. That way, no matter which boards 
+it picks, it will win for sure.
+
+In the above example, the second board is the last to win, which happens after 
+13 is eventually called and its middle column is completely marked. If you were 
+to keep playing until this point, the second board would have a sum of unmarked 
+numbers equal to 148 for a final score of 148 * 13 = 1924.
+
+Figure out which board will win last. Once it wins, what would its final score 
+be?
+
+
 """
 
 # import os
@@ -94,20 +114,20 @@ class Board:
         self.grid = {v: k for k, v in self.values.items()}
         self.marks = {k: False for k in list(product(*[range(self.size)]*2))}
         self.score = 0
+        self.bingo = False
 
     def __repr__(self):
         return f'Board({self._raw_grid})'
 
-    def mark_board(self, n):
-        bingo = False
+    def mark_board(self, n):        
         if n in self.values:            
             idx = self.values[n]
             self.marks[idx] = True
-            bingo = self._check_bingo(idx)
+            self.bingo = self._check_bingo(idx)
         
-        if bingo:
+        if self.bingo:
             self._score_board(n)
-        return bingo
+        return self.bingo
     
     def _check_bingo(self, idx):
         i = idx[0]
@@ -122,9 +142,6 @@ class Board:
                 self.score += self.grid[k]
         self.score *= n
         return self.score
-
-
-
 
 def process_data(raw_data):
     def str_to_list_of_int(l):
@@ -145,18 +162,36 @@ def process_data(raw_data):
 
     return numbers_drawn, boards
 
-# print(boards[0])
-# print([boards[0].mark_board(n) for n in [37, 72, 60, 35, 89]])
-# print([boards[0].mark_board(n) for n in [37, 32, 30, 29, 48]])
-def draw_numbers(numbers_drawn, boards):
-    for i, n in enumerate(number_drawn):
+def print_board_info(numbers_drawn, n, board):
+    print("Round:", numbers_drawn, "Last number drawn:", n)
+    print("Board:", board)
+    print("Score:", board.score)
+
+def find_winner(numbers_drawn, boards):
+    for i, n in enumerate(numbers_drawn):
         for b in boards:
             bingo = b.mark_board(n)
             if bingo:
-                print("Round:", i, "Last number drawn:", n)
-                print("Winning board:", b)
-                print("Winning score:", b.score)
+                print("-----Winner-----")
+                print_board_info(i, n, b)
                 return b.score
 
-number_drawn, boards = process_data(raw_data)
-winning_score = draw_numbers(number_drawn, boards)
+def find_loser(numbers_drawn, boards):
+    draw_stack = deepcopy(numbers_drawn)
+    draw_stack.reverse()
+    while len(boards) > 1:
+        n = draw_stack.pop()
+        boards = [b for b in boards if not b.mark_board(n)]
+    
+    last_board = boards[0]
+    while not last_board.bingo:
+        n = draw_stack.pop()
+        bingo = last_board.mark_board(n)
+        if bingo:
+            print("-----Loser-----")
+            print_board_info(len(draw_stack), n, last_board)
+            return last_board.score
+
+numbers_drawn, boards = process_data(raw_data)
+winning_score = find_winner(numbers_drawn, boards)
+losing_score = find_loser(numbers_drawn, boards)
