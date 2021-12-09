@@ -77,48 +77,86 @@ To guarantee victory against the giant squid, figure out which board will win
 first. What will your final score be if you choose that board?
 """
 
-import os
+# import os
 from copy import deepcopy
 import re
+from itertools import product
+from aoc2021 import aoc2021
 
-input_path = os.path.join('data', 'day-04_input-1.txt')
-with open(input_path, 'r') as f:
-    raw_data = f.readlines()
+raw_data = aoc2021.import_data(day=4)
 
 class Board:
     size = 5
-    def __init__(self, values):
-        self.values = values
-        self.marks = [[0 for i in range(self.size)] for i in range(self.size)]
+    def __init__(self, grid_values):
+        self._raw_grid = grid_values
+        self.values = {v: (i, j) for i, row in enumerate(self._raw_grid) 
+                                for j, v in enumerate(row)}
+        self.grid = {v: k for k, v in self.values.items()}
+        self.marks = {k: False for k in list(product(*[range(self.size)]*2))}
+        self.score = 0
+
+    def __repr__(self):
+        return f'Board({self._raw_grid})'
+
+    def mark_board(self, n):
+        bingo = False
+        if n in self.values:            
+            idx = self.values[n]
+            self.marks[idx] = True
+            bingo = self._check_bingo(idx)
+        
+        if bingo:
+            self._score_board(n)
+        return bingo
+    
+    def _check_bingo(self, idx):
+        i = idx[0]
+        bingo = all([self.marks[i,j] for j in range(self.size)])
+        j = idx[1]
+        bingo = bingo or all([self.marks[i,j] for i in range(self.size)])
+        return bingo
+
+    def _score_board(self, n):
+        for k, v in self.marks.items():
+            if not v:
+                self.score += self.grid[k]
+        self.score *= n
+        return self.score
+
+
+
 
 def process_data(raw_data):
     def str_to_list_of_int(l):
         return [int(v) for v in re.split(" |,", l) if len(v) > 0]
-    raw_data = [l.strip() for l in raw_data]
     numbers_drawn = str_to_list_of_int(raw_data[0])
 
     board_size = 5
     board_start = 2
 
-    boards = [[]]
-    current_board = boards[0]
+    boards = []
+    current_board = []    
     for l in raw_data[board_start:]:
         if len(l) > 0:
             current_board.append(str_to_list_of_int(l))
-        else:        
+        else:   
+            boards.append(Board(current_board))
             current_board = []
-            boards.append(current_board)
 
     return numbers_drawn, boards
 
+# print(boards[0])
+# print([boards[0].mark_board(n) for n in [37, 72, 60, 35, 89]])
+# print([boards[0].mark_board(n) for n in [37, 32, 30, 29, 48]])
+def draw_numbers(numbers_drawn, boards):
+    for i, n in enumerate(number_drawn):
+        for b in boards:
+            bingo = b.mark_board(n)
+            if bingo:
+                print("Round:", i, "Last number drawn:", n)
+                print("Winning board:", b)
+                print("Winning score:", b.score)
+                return b.score
+
 number_drawn, boards = process_data(raw_data)
-
-
-
-
-def sum_horizontal(board, x):
-    return sum()
-
-
-def sum_verticals(board, y):
-    return sum([row[y] for row in board])
+winning_score = draw_numbers(number_drawn, boards)
